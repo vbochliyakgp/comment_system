@@ -24,7 +24,7 @@ const Comment: React.FC<CommentProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const isUpvoted = comment.hasUpvoted || upvotedComments.has(comment._id);
+  const isUpvoted = comment.hasUpvoted === true || upvotedComments.has(comment._id);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

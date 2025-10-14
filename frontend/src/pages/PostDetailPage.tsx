@@ -15,7 +15,6 @@ const PostDetailPage: React.FC = () => {
     comments,
     commentsLoading,
     commentsError,
-    upvotedPosts,
     upvotedComments,
     fetchPostWithComments,
     upvoteComment,
@@ -85,7 +84,6 @@ const PostDetailPage: React.FC = () => {
           post={currentPost}
           onUpvote={handlePostUpvote}
           setShowCommentCreationForm={setShowCommentCreationForm}
-          isUpvoted={upvotedPosts.has(currentPost._id)}
         />
       )}
 

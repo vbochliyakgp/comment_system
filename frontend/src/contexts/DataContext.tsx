@@ -192,6 +192,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Upvote post
   const upvotePost = useCallback(async (postId: string) => {
     try {
+      console.log('Upvoting post:', postId);
       const response = await postsAPI.upvotePost(postId);
       
       if (response.success && response.data) {
@@ -237,7 +238,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       console.error('Upvote post error:', error);
       throw new Error(error.message || 'Failed to upvote post');
     }
-  }, []);
+  }, [currentPost]);
 
   // Edit comment
   const editComment = useCallback(async (commentId: string, text: string) => {

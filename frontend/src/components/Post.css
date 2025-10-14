@@ -89,6 +89,12 @@
   border-color: var(--upvote-color);
 }
 
+.upvote-button.upvoted {
+  color: var(--upvote-color);
+  background: var(--upvote-bg);
+  border-color: var(--upvote-color);
+}
+
 .comment-button:hover {
   color: var(--accent-color);
   border-color: var(--accent-color);

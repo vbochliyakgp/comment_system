@@ -7,16 +7,15 @@ interface PostProps {
   post: PostType;
   onUpvote?: () => void;
   setShowCommentCreationForm: (show: boolean) => void;
-  isUpvoted?: boolean;
 }
 
 const Post: React.FC<PostProps> = ({
   post,
   onUpvote,
   setShowCommentCreationForm,
-  isUpvoted = false,
 }) => {
-  const actualIsUpvoted = post.hasUpvoted || isUpvoted;
+  const actualIsUpvoted = post.hasUpvoted === true;
+  console.log('Post component - post.hasUpvoted:', post.hasUpvoted, 'actualIsUpvoted:', actualIsUpvoted, 'upvotes:', post.upvotes);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {

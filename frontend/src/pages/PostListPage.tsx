@@ -8,7 +8,6 @@ const PostListPage: React.FC = () => {
   const { 
     posts,
     postsLoading,
-    upvotedPosts,
     fetchPosts,
     upvotePost
   } = useData();
@@ -46,7 +45,6 @@ const PostListPage: React.FC = () => {
           posts={posts}
           onPostClick={handlePostClick}
           onUpvote={handleUpvote}
-          upvotedPosts={upvotedPosts}
         />
       )}
     </Layout>

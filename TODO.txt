@@ -1,0 +1,3 @@
+logic to show some main comments only
+
+value not updating in realtime when operation done in the upvote downvotes and some color in the same context

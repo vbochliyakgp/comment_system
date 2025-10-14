@@ -7,10 +7,9 @@ interface PostListProps {
   posts: Post[];
   onPostClick: (post: Post) => void;
   onUpvote: (postId: string) => void;
-  upvotedPosts: Set<string>;
 }
 
-export default function PostList({ posts, onPostClick, onUpvote, upvotedPosts }: PostListProps) {
+export default function PostList({ posts, onPostClick, onUpvote }: PostListProps) {
   return (
     <div className="post-list">
       <h2>All Posts</h2>
@@ -43,7 +42,7 @@ export default function PostList({ posts, onPostClick, onUpvote, upvotedPosts }:
               <div className="post-stat">
                 <ThumbsUp 
                   size={16} 
-                  className={post.hasUpvoted || upvotedPosts.has(post._id) ? 'upvoted' : ''}
+                  className={post.hasUpvoted === true ? 'upvoted' : ''}
                 />
                 <span>{post.upvotes || 0} upvotes</span>
               </div>
@@ -51,14 +50,14 @@ export default function PostList({ posts, onPostClick, onUpvote, upvotedPosts }:
             
             <div className="post-actions">
               <button
-                className={`upvote-btn ${post.hasUpvoted || upvotedPosts.has(post._id) ? 'upvoted' : ''}`}
+                className={`upvote-btn ${post.hasUpvoted === true ? 'upvoted' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   onUpvote(post._id);
                 }}
               >
                 <ThumbsUp size={16} />
-                {post.hasUpvoted || upvotedPosts.has(post._id) ? 'Upvoted' : 'Upvote'}
+                {post.hasUpvoted === true ? 'Upvoted' : 'Upvote'}
               </button>
             </div>
           </motion.div>
