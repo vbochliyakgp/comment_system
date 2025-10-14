@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Light theme variables */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f4;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-tertiary: #d1d5db;
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  --accent-color: #667eea;
+  --accent-hover: #5a67d8;
+  --upvote-color: #059669;
+  --upvote-bg: #ecfdf5;
+  --downvote-color: #dc2626;
+  --downvote-bg: #fef2f2;
+  --comment-line: #d1d5db;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+  
+  /* Button and UI variables */
+  --button-background: #ffffff;
+  --button-hover: #f8f9fa;
+  --card-background: #ffffff;
+  --input-background: #ffffff;
+  --hover-background: #f8f9fa;
+  --primary-color: #667eea;
+  --primary-hover: #5a67d8;
+  --primary-rgb: 102, 126, 234;
+  --error-color: #dc2626;
+  --logout-hover: #b91c1c;
+  --gradient-secondary: #764ba2;
+}
+
+[data-theme="dark"] {
+  /* Dark theme variables */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #262626;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-tertiary: #6b7280;
+  --border-color: #374151;
+  --border-light: #4b5563;
+  --accent-color: #818cf8;
+  --accent-hover: #6366f1;
+  --upvote-color: #10b981;
+  --upvote-bg: #064e3b;
+  --downvote-color: #ef4444;
+  --downvote-bg: #7f1d1d;
+  --comment-line: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  
+  /* Button and UI variables */
+  --button-background: #262626;
+  --button-hover: #2d2d2d;
+  --card-background: #262626;
+  --input-background: #1a1a1a;
+  --hover-background: #2d2d2d;
+  --primary-color: #818cf8;
+  --primary-hover: #6366f1;
+  --primary-rgb: 129, 140, 248;
+  --error-color: #ef4444;
+  --logout-hover: #dc2626;
+  --gradient-secondary: #8b5cf6;
+}
+
+:root {
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+/* Remove default button styles */
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

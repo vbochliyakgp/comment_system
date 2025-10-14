@@ -1,0 +1,268 @@
+.comment {
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 0;
+}
+
+.comment.nested {
+  position: relative;
+  padding-left: 20px;
+  margin-left: 0 !important;
+  margin-top: 4px;
+}
+
+/* style vertical lines for nesting comments */
+.comment.nested::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--comment-line);
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+.comment.nested::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 8px;
+  height: 2px;
+  background: var(--comment-line);
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+.comment.nested:hover::before,
+.comment.nested:hover::after {
+  opacity: 0.8;
+  background: var(--accent-color);
+}
+
+.comment-content {
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 0;
+  box-shadow: none;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.comment-content:hover {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 0 -12px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.author-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.comment-date {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.expand-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.expand-button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.comment-text {
+  color: var(--text-primary);
+  line-height: 1.4;
+  font-size: 14px;
+  margin-bottom: 8px;
+  word-wrap: break-word;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.upvote-button:hover {
+  color: var(--upvote-color);
+  background: var(--upvote-bg);
+}
+
+.upvote-button.upvoted {
+  color: var(--upvote-color);
+  background: var(--upvote-bg);
+}
+
+.reply-button:hover {
+  color: var(--accent-color);
+  background: var(--bg-tertiary);
+}
+
+.comment-replies {
+  margin-top: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.comment.nested .comment-content {
+  position: relative;
+}
+
+.comment.nested .comment-content::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.comment.nested:hover .comment-content::before {
+  background: var(--bg-tertiary);
+  opacity: 0.3;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .comment {
+    margin-left: 0 !important;
+  }
+
+  .comment.nested {
+    padding-left: 16px;
+    margin-left: 0 !important;
+    margin-top: 3px;
+  }
+
+  .comment.nested .comment-content::before {
+    left: -16px;
+    width: 16px;
+  }
+
+  .comment-content {
+    padding: 6px 0;
+  }
+
+  .comment-content:hover {
+    padding: 6px 8px;
+    margin: 0 -8px;
+  }
+
+  .comment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .comment-author {
+    gap: 6px;
+  }
+
+  .author-avatar {
+    width: 20px;
+    height: 20px;
+  }
+
+  .comment-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .action-button {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment.nested {
+    padding-left: 12px;
+    margin-top: 2px;
+  }
+
+  .comment.nested .comment-content::before {
+    left: -12px;
+    width: 12px;
+  }
+
+  .comment-content {
+    padding: 4px 0;
+  }
+
+  .comment-content:hover {
+    padding: 4px 6px;
+    margin: 0 -6px;
+  }
+
+  .comment-text {
+    font-size: 13px;
+  }
+}
