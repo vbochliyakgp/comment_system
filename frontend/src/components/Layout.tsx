@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         transition={{ duration: 0.5 }}
       >
         <header className="app-header">
-          <h1>InterIIT Tech Meet 14.0</h1>
+          <h1>Comment System</h1>
           <div className="header-actions">
             <motion.button 
               className="theme-toggle"

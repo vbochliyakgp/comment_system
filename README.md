@@ -12,7 +12,7 @@ A full-stack discussion platform with nested comments and upvoting system.
 1. **Clone and setup backend**
 ```bash
 git clone <repository-url>
-cd interIIT/backend
+cd ParentDir/backend
 npm install
 cp .env.example .env  # Add your MongoDB URI
 npm start

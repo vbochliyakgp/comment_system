@@ -1,4 +1,4 @@
-# InterIIT Discussion Platform API
+# Platform API
 
 ## Base URL
 ```
