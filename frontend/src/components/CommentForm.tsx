@@ -43,6 +43,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
     try {
       await createComment(text.trim(), postId);
+      setShowCommentCreationForm(false);
       setText("");
       onSuccess?.();
     } catch (error: any) {

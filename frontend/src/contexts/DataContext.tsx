@@ -142,8 +142,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           parentId,
         });
 
-        if (response.success) {
-          await fetchPostWithComments(postId);
+        if (response.success && response.data?.comment) {
+          setComments((prevComments) => {
+            const newComment = response.data!.comment;
+            return [...prevComments, newComment];
+          });
         } else {
           throw new Error(response.message || "Failed to create comment");
         }
@@ -152,7 +155,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         throw new Error(error.message || "Failed to create comment");
       }
     },
-    [fetchPostWithComments]
+    []
   );
 
   const upvoteComment = useCallback(async (commentId: string) => {
@@ -176,7 +179,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           return [...updatedComments];
         });
 
-        // Update the upvoted comments set for quick lookups
         setUpvotedComments((prev) => {
           const newSet = new Set(prev);
           if (response.data?.hasUpvoted) {
@@ -258,6 +260,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     const commentMap = new Map<string, Comment & { replies?: Comment[] }>();
     const rootComments: (Comment & { replies?: Comment[] })[] = [];
 
+    // Create map of all comments with empty replies array
     comments.forEach((comment) => {
       commentMap.set(comment._id, {
         ...comment,
@@ -266,6 +269,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       });
     });
 
+    // Build parent-child relationships
     comments.forEach((comment) => {
       const commentWithReplies = commentMap.get(comment._id);
       if (!commentWithReplies) return;
@@ -281,6 +285,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       }
     });
 
+    // Sort: user's comments first, then by upvotes
     const sortComments = (
       commentList: (Comment & { replies?: Comment[] })[]
     ) => {
@@ -299,6 +304,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
     const sortedRootComments = sortComments(rootComments);
 
+    // Recursively sort all nested replies
     const sortRepliesRecursively = (
       commentList: (Comment & { replies?: Comment[] })[]
     ) => {
@@ -311,7 +317,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     };
 
     sortRepliesRecursively(sortedRootComments);
-
+    console.debug("Sorted root comments:", sortedRootComments);
     return sortedRootComments;
   };
 

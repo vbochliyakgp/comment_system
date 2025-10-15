@@ -53,8 +53,7 @@ const PostDetailPage: React.FC = () => {
     }
   };
 
-  const handleReply = (_commentId: string) => {
-  };
+  const handleReply = (_commentId: string) => {};
 
   if (!postId) {
     return (
@@ -88,8 +87,7 @@ const PostDetailPage: React.FC = () => {
       {currentPost && showCommentCreationForm && (
         <CommentForm
           postId={currentPost._id}
-          onSuccess={() => {
-          }}
+          onSuccess={() => {}}
           setShowCommentCreationForm={setShowCommentCreationForm}
         />
       )}

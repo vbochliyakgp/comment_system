@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MessageCircle, SortAsc, SortDesc, MoreHorizontal } from 'lucide-react';
-import Comment from './Comment';
-import type { Comment as CommentType } from '../services/api';
-import './CommentList.css';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { MessageCircle, SortAsc, SortDesc, MoreHorizontal } from "lucide-react";
+import Comment from "./Comment";
+import type { Comment as CommentType } from "../services/api";
+import "./CommentList.css";
 
 interface CommentListProps {
   comments: CommentType[];
@@ -13,28 +13,32 @@ interface CommentListProps {
   postId: string;
 }
 
-type SortOption = 'newest' | 'oldest' | 'most_upvoted' | 'least_upvoted';
+type SortOption = "newest" | "oldest" | "most_upvoted" | "least_upvoted";
 
-const CommentList: React.FC<CommentListProps> = ({ 
-  comments, 
-  onUpvote, 
+const CommentList: React.FC<CommentListProps> = ({
+  comments,
+  onUpvote,
   onReply,
   upvotedComments = new Set(),
-  postId
+  postId,
 }) => {
-  const [sortBy, setSortBy] = useState<SortOption>('most_upvoted');
+  const [sortBy, setSortBy] = useState<SortOption | null>(null);
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
 
   const sortedComments = [...comments].sort((a, b) => {
     switch (sortBy) {
-      case 'newest':
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case 'oldest':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      case 'most_upvoted':
+      case "newest":
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "most_upvoted":
         return b.upvotes - a.upvotes;
-      case 'least_upvoted':
+      case "least_upvoted":
         return a.upvotes - b.upvotes;
       default:
         return 0;
@@ -42,21 +46,21 @@ const CommentList: React.FC<CommentListProps> = ({
   });
 
   const sortOptions = [
-    { value: 'most_upvoted', label: 'Most Upvoted', icon: SortDesc },
-    { value: 'least_upvoted', label: 'Least Upvoted', icon: SortAsc },
-    { value: 'newest', label: 'Newest First', icon: SortDesc },
-    { value: 'oldest', label: 'Oldest First', icon: SortAsc }
+    { value: "most_upvoted", label: "Most Upvoted", icon: SortDesc },
+    { value: "least_upvoted", label: "Least Upvoted", icon: SortAsc },
+    { value: "newest", label: "Newest First", icon: SortDesc },
+    { value: "oldest", label: "Oldest First", icon: SortAsc },
   ];
 
   const getSortLabel = (option: SortOption) => {
-    return sortOptions.find(opt => opt.value === option)?.label || 'Sort';
+    return sortOptions.find((opt) => opt.value === option)?.label || "Sort";
   };
 
   const totalComments = comments.length;
   const topLevelLimit = 10;
   const hasMoreComments = totalComments > topLevelLimit;
-  const visibleComments = showAllComments 
-    ? sortedComments 
+  const visibleComments = showAllComments
+    ? sortedComments
     : sortedComments.slice(0, topLevelLimit);
 
   return (
@@ -64,20 +68,22 @@ const CommentList: React.FC<CommentListProps> = ({
       <div className="comment-list-header">
         <div className="comment-count">
           <MessageCircle size={20} />
-          <span>{totalComments} {totalComments === 1 ? 'Comment' : 'Comments'}</span>
+          <span>
+            {totalComments} {totalComments === 1 ? "Comment" : "Comments"}
+          </span>
         </div>
-        
+
         <div className="sort-container">
-          <button 
+          <button
             className="sort-button"
             onClick={() => setShowSortOptions(!showSortOptions)}
           >
             <span>{getSortLabel(sortBy)}</span>
             <SortDesc size={16} />
           </button>
-          
+
           {showSortOptions && (
-            <motion.div 
+            <motion.div
               className="sort-dropdown"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -89,7 +95,9 @@ const CommentList: React.FC<CommentListProps> = ({
                 return (
                   <button
                     key={option.value}
-                    className={`sort-option ${sortBy === option.value ? 'active' : ''}`}
+                    className={`sort-option ${
+                      sortBy === option.value ? "active" : ""
+                    }`}
                     onClick={() => {
                       setSortBy(option.value as SortOption);
                       setShowSortOptions(false);
@@ -113,7 +121,7 @@ const CommentList: React.FC<CommentListProps> = ({
             <p>Be the first to share your thoughts!</p>
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             className="comments"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -130,7 +138,7 @@ const CommentList: React.FC<CommentListProps> = ({
                 postId={postId}
               />
             ))}
-            
+
             {hasMoreComments && (
               <motion.button
                 className="see-more-button"
@@ -141,10 +149,13 @@ const CommentList: React.FC<CommentListProps> = ({
               >
                 <MoreHorizontal size={16} />
                 <span>
-                  {showAllComments 
-                    ? 'Show less' 
-                    : `View ${totalComments - topLevelLimit} more ${totalComments - topLevelLimit === 1 ? 'comment' : 'comments'}`
-                  }
+                  {showAllComments
+                    ? "Show less"
+                    : `View ${totalComments - topLevelLimit} more ${
+                        totalComments - topLevelLimit === 1
+                          ? "comment"
+                          : "comments"
+                      }`}
                 </span>
               </motion.button>
             )}
