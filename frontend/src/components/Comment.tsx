@@ -1,9 +1,15 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ThumbsUp, Reply, ChevronDown, ChevronRight } from 'lucide-react';
-import type { Comment as CommentType } from '../services/api';
-import ReplyForm from './ReplyForm';
-import './Comment.css';
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ThumbsUp,
+  Reply,
+  ChevronDown,
+  ChevronRight,
+  MoreHorizontal,
+} from "lucide-react";
+import type { Comment as CommentType } from "../services/api";
+import ReplyForm from "./ReplyForm";
+import "./Comment.css";
 
 interface CommentProps {
   comment: CommentType & { replies?: CommentType[] };
@@ -14,16 +20,17 @@ interface CommentProps {
   postId: string;
 }
 
-const Comment: React.FC<CommentProps> = ({ 
-  comment, 
-  onUpvote, 
-  onReply, 
+const Comment: React.FC<CommentProps> = ({
+  comment,
+  onUpvote,
+  onReply,
   depth = 0,
   upvotedComments = new Set(),
-  postId
+  postId,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showAllReplies, setShowAllReplies] = useState(false);
   const isUpvoted = useMemo(() => {
     return comment.hasUpvoted === true || upvotedComments.has(comment._id);
   }, [comment.hasUpvoted, comment._id, upvotedComments]);
@@ -31,16 +38,18 @@ const Comment: React.FC<CommentProps> = ({
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'just now';
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+    );
+
+    if (diffInHours < 1) return "just now";
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-    
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
     });
   };
 
@@ -66,11 +75,25 @@ const Comment: React.FC<CommentProps> = ({
   };
 
   const maxDepth = 6;
-  const shouldShowCollapse = depth >= maxDepth && comment.replies && comment.replies.length > 0;
+  const shouldShowCollapse =
+    depth >= maxDepth && comment.replies && comment.replies.length > 0;
+
+  const getDisplayLimit = (depth: number) => {
+    if (depth === 0) return 10;
+    if (depth === 1) return 1;
+    return 0;
+  };
+
+  const displayLimit = getDisplayLimit(depth);
+  const hasMoreReplies =
+    comment.replies && comment.replies.length > displayLimit;
+  const visibleReplies = showAllReplies
+    ? comment.replies || []
+    : comment.replies?.slice(0, displayLimit) || [];
 
   return (
-    <motion.div 
-      className={`comment ${depth > 0 ? 'nested' : ''}`}
+    <motion.div
+      className={`comment ${depth > 0 ? "nested" : ""}`}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: depth * 0.05 }}
@@ -78,35 +101,38 @@ const Comment: React.FC<CommentProps> = ({
       <div className="comment-content">
         <div className="comment-header">
           <div className="comment-author">
-            <img 
-              src={comment.userId.avatar} 
+            <img
+              src={comment.userId.avatar}
               alt={comment.userId.name}
               className="author-avatar"
             />
             <div className="author-info">
               <span className="author-name">{comment.userId.name}</span>
-              <span className="comment-date">{formatDate(comment.createdAt)}</span>
+              <span className="comment-date">
+                {formatDate(comment.createdAt)}
+              </span>
             </div>
           </div>
-          
+
           {shouldShowCollapse && (
-            <button 
-              className="expand-button"
-              onClick={toggleExpanded}
-            >
-              {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-              <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
+            <button className="expand-button" onClick={toggleExpanded}>
+              {isExpanded ? (
+                <ChevronDown size={16} />
+              ) : (
+                <ChevronRight size={16} />
+              )}
+              <span>{isExpanded ? "Collapse" : "Expand"}</span>
             </button>
           )}
         </div>
 
-        <div className="comment-text">
-          {comment.text}
-        </div>
+        <div className="comment-text">{comment.text}</div>
 
         <div className="comment-actions">
-          <motion.button 
-            className={`action-button upvote-button ${isUpvoted ? 'upvoted' : ''}`}
+          <motion.button
+            className={`action-button upvote-button ${
+              isUpvoted ? "upvoted" : ""
+            }`}
             onClick={handleUpvote}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -115,7 +141,7 @@ const Comment: React.FC<CommentProps> = ({
             <span>{comment.upvotes}</span>
           </motion.button>
 
-          <motion.button 
+          <motion.button
             className="action-button reply-button"
             onClick={handleReply}
             whileHover={{ scale: 1.05 }}
@@ -141,14 +167,14 @@ const Comment: React.FC<CommentProps> = ({
 
       <AnimatePresence>
         {isExpanded && comment.replies && comment.replies.length > 0 && (
-          <motion.div 
+          <motion.div
             className="comment-replies"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {comment.replies.map((reply) => (
+            {visibleReplies.map((reply) => (
               <Comment
                 key={reply._id}
                 comment={reply}
@@ -159,6 +185,26 @@ const Comment: React.FC<CommentProps> = ({
                 postId={postId}
               />
             ))}
+
+            {hasMoreReplies && !showAllReplies && (
+              <motion.button
+                className="see-more-button"
+                onClick={() => setShowAllReplies(!showAllReplies)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <MoreHorizontal size={16} />
+
+                <span>
+                  {`${comment.replies!.length - displayLimit} more ${
+                    comment.replies!.length - displayLimit === 1
+                      ? "reply"
+                      : "replies"
+                  }`}
+                </span>
+              </motion.button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

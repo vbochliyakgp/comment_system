@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, SortAsc, SortDesc } from 'lucide-react';
+import { MessageCircle, SortAsc, SortDesc, MoreHorizontal } from 'lucide-react';
 import Comment from './Comment';
 import type { Comment as CommentType } from '../services/api';
 import './CommentList.css';
@@ -24,6 +24,7 @@ const CommentList: React.FC<CommentListProps> = ({
 }) => {
   const [sortBy, setSortBy] = useState<SortOption>('most_upvoted');
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
 
   const sortedComments = [...comments].sort((a, b) => {
     switch (sortBy) {
@@ -52,6 +53,11 @@ const CommentList: React.FC<CommentListProps> = ({
   };
 
   const totalComments = comments.length;
+  const topLevelLimit = 10;
+  const hasMoreComments = totalComments > topLevelLimit;
+  const visibleComments = showAllComments 
+    ? sortedComments 
+    : sortedComments.slice(0, topLevelLimit);
 
   return (
     <div className="comment-list">
@@ -113,7 +119,7 @@ const CommentList: React.FC<CommentListProps> = ({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            {sortedComments.map((comment) => (
+            {visibleComments.map((comment) => (
               <Comment
                 key={comment._id}
                 comment={comment}
@@ -124,6 +130,24 @@ const CommentList: React.FC<CommentListProps> = ({
                 postId={postId}
               />
             ))}
+            
+            {hasMoreComments && (
+              <motion.button
+                className="see-more-button"
+                onClick={() => setShowAllComments(!showAllComments)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <MoreHorizontal size={16} />
+                <span>
+                  {showAllComments 
+                    ? 'Show less' 
+                    : `View ${totalComments - topLevelLimit} more ${totalComments - topLevelLimit === 1 ? 'comment' : 'comments'}`
+                  }
+                </span>
+              </motion.button>
+            )}
           </motion.div>
         )}
       </div>
