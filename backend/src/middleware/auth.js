@@ -92,38 +92,3 @@ export const authorize = (...roles) => {
     next();
   };
 };
-
-/**
- * Optional authentication middleware (doesn't fail if no token)
- */
-export const optionalAuth = async (req, res, next) => {
-  try {
-    let token;
-
-    // Check for token in Authorization header
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-
-    if (token) {
-      // Verify token
-      const decoded = verifyToken(token);
-
-      // Get user from database
-      const user = await User.findById(decoded.id).select("-password");
-
-      if (user && user.isActive) {
-        req.user = user;
-      }
-    }
-
-    next();
-  } catch (error) {
-    // Don't fail on optional auth errors, just continue without user
-    console.log("Optional auth error (ignored):", error.message);
-    next();
-  }
-};

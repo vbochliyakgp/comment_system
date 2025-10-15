@@ -12,7 +12,7 @@ export const getPosts = async (req, res) => {
       skip = 0,
     } = req.query;
 
-    const userId = req.user?._id;
+    const userId = req.user._id;
     const posts = await Post.getPosts({
       sortBy,
       sortOrder,
@@ -20,14 +20,10 @@ export const getPosts = async (req, res) => {
       skip: parseInt(skip),
     });
 
-    // Add upvote status for each post if user is authenticated
+    // Add upvote status for each post
     const postsWithUpvoteStatus = posts.map(post => {
       const postObj = post.toObject ? post.toObject() : post;
-      if (userId) {
-        postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
-      } else {
-        postObj.hasUpvoted = false;
-      }
+      postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
       return postObj;
     });
 
@@ -53,14 +49,7 @@ export const getPosts = async (req, res) => {
 export const upvotePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user?._id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Authentication required",
-      });
-    }
+    const userId = req.user._id;
 
     const post = await Post.findById(id);
     if (!post) {
@@ -110,7 +99,7 @@ export const getPostWithComments = async (req, res) => {
   try {
     const { id } = req.params;
     const { sortBy = "upvotes", sortOrder = "desc" } = req.query;
-    const userId = req.user?._id;
+    const userId = req.user._id;
 
     const post = await Post.findById(id);
     if (!post) {
@@ -130,20 +119,12 @@ export const getPostWithComments = async (req, res) => {
 
     // Add upvote status for post
     const postObj = post.toObject ? post.toObject() : post;
-    if (userId) {
-      postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
-    } else {
-      postObj.hasUpvoted = false;
-    }
+    postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
 
     // Add upvote status for comments
     const commentsWithUpvoteStatus = comments.map(comment => {
       const commentObj = comment.toObject ? comment.toObject() : comment;
-      if (userId) {
-        commentObj.hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());
-      } else {
-        commentObj.hasUpvoted = false;
-      }
+      commentObj.hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());
       return commentObj;
     });
 

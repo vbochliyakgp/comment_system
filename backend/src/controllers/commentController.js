@@ -83,14 +83,7 @@ export const createComment = async (req, res) => {
 export const upvoteComment = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user?._id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Authentication required",
-      });
-    }
+    const userId = req.user._id;
 
     const comment = await Comment.findById(id);
     if (!comment) {
