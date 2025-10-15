@@ -17,8 +17,9 @@ check_dependencies() {
         sudo sh get-docker.sh
         sudo usermod -aG docker $USER
         rm get-docker.sh
-        echo "Docker installed. Please log out and back in, then run the script again."
-        exit 1
+        echo "Docker installed. Activating group membership..."
+        newgrp docker
+        echo "Docker ready. Continuing deployment..."
     fi
     
     # Check if Docker Compose is available
@@ -65,16 +66,50 @@ docker compose up -d --build
 echo "Waiting for nginx to be ready..."
 sleep 10
 
-# Get SSL certificate
-echo "Getting SSL certificate..."
-docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --email $EMAIL --agree-tos --no-eff-email -d $DOMAIN
+# Try to get SSL certificate
+echo "Attempting to get SSL certificate..."
+if docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --email $EMAIL --agree-tos --no-eff-email -d $DOMAIN; then
+    echo "SSL certificate obtained successfully!"
+    
+    # Add SSL configuration to nginx.conf
+    echo "Adding SSL configuration..."
+    cat >> nginx.conf << 'EOF'
 
-# Update nginx config with domain
-sed -i "s/interiit14.work.gd/$DOMAIN/g" nginx.conf
+server {
+    listen 443 ssl;
+    server_name interiit14.work.gd;
+    
+    ssl_certificate /etc/letsencrypt/live/interiit14.work.gd/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/interiit14.work.gd/privkey.pem;
+    
+    location /api/ {
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+}
+EOF
 
-# Restart nginx with SSL
-echo "Restarting nginx with SSL..."
-docker compose restart frontend
+    # Update HTTP server to redirect to HTTPS
+    sed -i '/location \/ {/i\    location / {\n        return 301 https://$server_name$request_uri;\n    }\n\n    location /api/ {' nginx.conf
+    sed -i '/location \/api\/ {/,/}/d' nginx.conf
 
-echo "Deployment complete!"
-echo "Your app is available at: https://$DOMAIN"
+    # Restart nginx with SSL
+    echo "Restarting nginx with SSL..."
+    docker compose restart frontend
+    
+    echo "Deployment complete with SSL!"
+    echo "Your app is available at: https://$DOMAIN"
+else
+    echo "SSL certificate generation failed. Continuing with HTTP only."
+    echo "Deployment complete without SSL!"
+    echo "Your app is available at: http://$DOMAIN"
+fi
