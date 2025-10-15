@@ -25,7 +25,6 @@ const CommentList: React.FC<CommentListProps> = ({
   const [sortBy, setSortBy] = useState<SortOption>('most_upvoted');
   const [showSortOptions, setShowSortOptions] = useState(false);
 
-  // Sort comments based on selected option
   const sortedComments = [...comments].sort((a, b) => {
     switch (sortBy) {
       case 'newest':

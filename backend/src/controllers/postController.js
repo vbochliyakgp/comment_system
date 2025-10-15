@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 
 /**
  * Get all posts
@@ -20,7 +21,6 @@ export const getPosts = async (req, res) => {
       skip: parseInt(skip),
     });
 
-    // Add upvote status for each post
     const postsWithUpvoteStatus = posts.map(post => {
       const postObj = post.toObject ? post.toObject() : post;
       postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
@@ -59,15 +59,12 @@ export const upvotePost = async (req, res) => {
       });
     }
 
-    // Check if user has already upvoted
     const hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
     
     if (hasUpvoted) {
-      // Remove upvote
       post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
       post.upvotes = Math.max(0, post.upvotes - 1);
     } else {
-      // Add upvote
       post.upvotedBy.push(userId);
       post.upvotes += 1;
       
@@ -109,19 +106,15 @@ export const getPostWithComments = async (req, res) => {
       });
     }
 
-    // Get comments for this post
-    const Comment = (await import("../models/Comment.js")).default;
     const comments = await Comment.getCommentsForPost(id, {
       sortBy,
       sortOrder,
       limit: 100,
     });
 
-    // Add upvote status for post
     const postObj = post.toObject ? post.toObject() : post;
     postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
 
-    // Add upvote status for comments
     const commentsWithUpvoteStatus = comments.map(comment => {
       const commentObj = comment.toObject ? comment.toObject() : comment;
       commentObj.hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());

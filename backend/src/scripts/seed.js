@@ -18,7 +18,6 @@ const seedData = async () => {
     await Comment.deleteMany({});
     console.log("Cleared existing data");
 
-    // Create users individually to ensure password hashing works properly
     const userData = [
       {
         name: "Liam Joshi",
@@ -49,7 +48,7 @@ const seedData = async () => {
     const users = [];
     for (const userInfo of userData) {
       const user = new User(userInfo);
-      await user.save(); // This will trigger the pre-save middleware to hash the password
+      await user.save();
       users.push(user);
     }
     console.log("Created users:", users.length);

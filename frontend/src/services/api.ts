@@ -1,9 +1,7 @@
 import axios, { type AxiosResponse } from 'axios';
 
-// API base configuration
 const API_BASE_URL = 'http://localhost:3000/api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
@@ -12,7 +10,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -26,15 +23,12 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - clear storage but don't redirect
-      // Let the AuthContext handle the authentication state
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
@@ -42,7 +36,6 @@ api.interceptors.response.use(
   }
 );
 
-// Types for API responses
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
@@ -90,7 +83,6 @@ export interface Comment {
   updatedAt: string;
 }
 
-// Auth API
 export const authAPI = {
   register: async (userData: { name: string; email: string; password: string }) => {
     const response = await api.post<ApiResponse<{ user: User; token: string }>>('/auth/register', userData);
@@ -106,29 +98,18 @@ export const authAPI = {
     const response = await api.get<ApiResponse<{ user: User }>>('/auth/profile');
     return response.data;
   },
-
-
-  logout: async () => {
-    const response = await api.post<ApiResponse>('/auth/logout');
-    return response.data;
-  },
 };
 
-// Posts API
 export const postsAPI = {
   getPosts: async (params?: { limit?: number; skip?: number; sortBy?: string; sortOrder?: string }) => {
     const response = await api.get<ApiResponse<{ posts: Post[]; count: number }>>('/posts', { params });
     return response.data;
   },
 
-
   getPostWithComments: async (id: string, params?: { sortBy?: string; sortOrder?: string; limit?: number; skip?: number }) => {
     const response = await api.get<ApiResponse<{ post: Post; comments: Comment[]; commentCount: number }>>(`/posts/${id}/comments`, { params });
     return response.data;
   },
-
-
-
 
   upvotePost: async (id: string) => {
     const response = await api.post<ApiResponse<{ upvotes: number; hasUpvoted: boolean }>>(`/posts/${id}/upvote`);
@@ -136,7 +117,6 @@ export const postsAPI = {
   },
 };
 
-// Comments API
 export const commentsAPI = {
 
   createComment: async (commentData: { text: string; postId: string; parentId?: string }) => {
@@ -144,15 +124,12 @@ export const commentsAPI = {
     return response.data;
   },
 
-
-
   upvoteComment: async (id: string) => {
     const response = await api.post<ApiResponse<{ upvotes: number; hasUpvoted: boolean }>>(`/comments/${id}/upvote`);
     return response.data;
   },
 };
 
-// Health check
 export const healthAPI = {
   check: async () => {
     const response = await api.get<ApiResponse>('/health');

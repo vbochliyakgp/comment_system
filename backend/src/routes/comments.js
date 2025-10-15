@@ -8,7 +8,6 @@ import { validateComment } from "../middleware/validation.js";
 
 const router = express.Router();
 
-// Protected routes (require authentication)
 router.post("/", authenticate, validateComment, createComment);
 router.post("/:id/upvote", authenticate, upvoteComment);
 

@@ -20,12 +20,10 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Basic validation
       if (!email || !password) {
         throw new Error("Please fill in all fields");
       }
 
-      // Simple password validation (minimum 6 characters for demo)
       if (password.length < 6) {
         throw new Error("Password must be at least 6 characters");
       }

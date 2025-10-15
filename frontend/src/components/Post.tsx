@@ -15,7 +15,6 @@ const Post: React.FC<PostProps> = ({
   setShowCommentCreationForm,
 }) => {
   const actualIsUpvoted = post.hasUpvoted === true;
-  console.log('Post component - post.hasUpvoted:', post.hasUpvoted, 'actualIsUpvoted:', actualIsUpvoted, 'upvotes:', post.upvotes);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {

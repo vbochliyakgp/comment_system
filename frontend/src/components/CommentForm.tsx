@@ -42,7 +42,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setError("");
 
     try {
-      await createComment(text.trim(), postId); // No parentId for top-level comments
+      await createComment(text.trim(), postId);
       setText("");
       onSuccess?.();
     } catch (error: any) {

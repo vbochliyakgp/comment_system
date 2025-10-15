@@ -59,15 +59,12 @@ commentSchema.virtual("netScore").get(function () {
   return this.upvotes;
 });
 
-// Virtual for path (useful for nested comments)
 commentSchema.virtual("path").get(function () {
   return this.parentId ? `${this.parentId}/${this._id}` : this._id.toString();
 });
 
-// Ensure virtual fields are serialized
 commentSchema.set("toJSON", { virtuals: true });
 
-// Pre-save middleware to calculate depth
 commentSchema.pre("save", async function (next) {
   if (this.isNew && this.parentId) {
     try {
@@ -82,7 +79,6 @@ commentSchema.pre("save", async function (next) {
   next();
 });
 
-// Post-save middleware to update parent's reply count
 commentSchema.post("save", async function (doc) {
   if (doc.parentId) {
     try {
@@ -96,13 +92,11 @@ commentSchema.post("save", async function (doc) {
   }
 });
 
-// Instance method to increment upvotes
 commentSchema.methods.incrementUpvotes = function () {
   this.upvotes += 1;
   return this.save();
 };
 
-// Instance method to get nested replies
 commentSchema.methods.getReplies = function () {
   return this.constructor
     .find({
@@ -112,7 +106,6 @@ commentSchema.methods.getReplies = function () {
     .sort({ createdAt: 1 });
 };
 
-// Static method to get comments for a post with nested structure
 commentSchema.statics.getCommentsForPost = function (postId, options = {}) {
   const {
     sortBy = "upvotes",

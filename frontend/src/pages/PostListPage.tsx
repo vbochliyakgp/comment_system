@@ -13,7 +13,6 @@ const PostListPage: React.FC = () => {
   } = useData();
   const navigate = useNavigate();
 
-  // Load posts when component mounts
   useEffect(() => {
     if (posts.length === 0) {
       fetchPosts();

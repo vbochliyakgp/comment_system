@@ -23,7 +23,6 @@ const PostDetailPage: React.FC = () => {
 
   const [showCommentCreationForm, setShowCommentCreationForm] = useState(false);
 
-  // Load post and comments when component mounts
   useEffect(() => {
     if (postId) {
       fetchPostWithComments(postId);
@@ -55,7 +54,6 @@ const PostDetailPage: React.FC = () => {
   };
 
   const handleReply = (_commentId: string) => {
-    // This is handled by the Comment component now
   };
 
   if (!postId) {
@@ -91,7 +89,6 @@ const PostDetailPage: React.FC = () => {
         <CommentForm
           postId={currentPost._id}
           onSuccess={() => {
-            // Comments will be refreshed automatically by the createComment function
           }}
           setShowCommentCreationForm={setShowCommentCreationForm}
         />

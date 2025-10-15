@@ -42,26 +42,20 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-// Index for better query performance
 postSchema.index({ createdAt: -1 });
 postSchema.index({ upvotes: -1 });
 
-// Virtual for net score (upvotes)
 postSchema.virtual("netScore").get(function () {
   return this.upvotes;
 });
 
-// Ensure virtual fields are serialized
 postSchema.set("toJSON", { virtuals: true });
 
-// Instance method to increment upvotes
 postSchema.methods.incrementUpvotes = function () {
   this.upvotes += 1;
   return this.save();
 };
 
-
-// Instance method to update comment count
 postSchema.methods.updateCommentCount = function () {
   return mongoose
     .model("Comment")
@@ -72,7 +66,6 @@ postSchema.methods.updateCommentCount = function () {
     });
 };
 
-// Static method to get posts with pagination and sorting
 postSchema.statics.getPosts = async function (options = {}) {
   const {
     sortBy = "createdAt",
@@ -81,11 +74,9 @@ postSchema.statics.getPosts = async function (options = {}) {
     skip = 0,
   } = options;
 
-  // Build sort object
   const sortObj = {};
   sortObj[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-  // Build query
   const query = {};
 
   try {

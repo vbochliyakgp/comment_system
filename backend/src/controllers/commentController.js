@@ -7,7 +7,6 @@ import { validationResult } from "express-validator";
  */
 export const createComment = async (req, res) => {
   try {
-    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -27,7 +26,6 @@ export const createComment = async (req, res) => {
       });
     }
 
-    // Verify post exists
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({
@@ -36,7 +34,6 @@ export const createComment = async (req, res) => {
       });
     }
 
-    // If parentId is provided, verify parent comment exists
     if (parentId) {
       const parentComment = await Comment.findById(parentId);
       if (!parentComment) {
@@ -47,7 +44,6 @@ export const createComment = async (req, res) => {
       }
     }
 
-    // Create comment
     const comment = new Comment({
       text,
       postId,
@@ -57,7 +53,6 @@ export const createComment = async (req, res) => {
 
     await comment.save();
 
-    // Populate user data
     await comment.populate("userId", "name email avatar");
 
     res.status(201).json({
@@ -76,7 +71,6 @@ export const createComment = async (req, res) => {
   }
 };
 
-
 /**
  * Upvote a comment
  */
@@ -93,18 +87,18 @@ export const upvoteComment = async (req, res) => {
       });
     }
 
-    // Check if user has already upvoted
-    const hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());
-    
+    const hasUpvoted = comment.upvotedBy.some(
+      (id) => id.toString() === userId.toString()
+    );
+
     if (hasUpvoted) {
-      // Remove upvote
-      comment.upvotedBy = comment.upvotedBy.filter(id => id.toString() !== userId.toString());
+      comment.upvotedBy = comment.upvotedBy.filter(
+        (id) => id.toString() !== userId.toString()
+      );
       comment.upvotes = Math.max(0, comment.upvotes - 1);
     } else {
-      // Add upvote
       comment.upvotedBy.push(userId);
       comment.upvotes += 1;
-      
     }
 
     await comment.save();

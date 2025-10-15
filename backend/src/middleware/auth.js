@@ -8,7 +8,6 @@ export const authenticate = async (req, res, next) => {
   try {
     let token;
 
-    // Check for token in Authorization header
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -23,10 +22,8 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
-    // Verify token
     const decoded = verifyToken(token);
 
-    // Get user from database
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
@@ -43,7 +40,6 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
-    // Add user to request object
     req.user = user;
     next();
   } catch (error) {
