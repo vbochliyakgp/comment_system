@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import type { ReactNode } from "react";
 import { postsAPI, commentsAPI } from "../services/api";
 import type { Post, Comment } from "../services/api";
@@ -154,18 +160,23 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const response = await commentsAPI.upvoteComment(commentId);
 
       if (response.success && response.data) {
-        setComments((prevComments) =>
-          prevComments.map((comment) =>
+        setComments((prevComments) => {
+          const updatedComments = prevComments.map((comment) =>
             comment._id === commentId
               ? {
                   ...comment,
-                  upvotes: response.data?.upvotes || comment.upvotes,
+                  upvotes:
+                    response.data?.upvotes == 0
+                      ? 0
+                      : response.data?.upvotes || comment.upvotes,
                   hasUpvoted: response.data?.hasUpvoted || false,
                 }
               : comment
-          )
-        );
+          );
+          return [...updatedComments];
+        });
 
+        // Update the upvoted comments set for quick lookups
         setUpvotedComments((prev) => {
           const newSet = new Set(prev);
           if (response.data?.hasUpvoted) {
@@ -248,7 +259,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     const rootComments: (Comment & { replies?: Comment[] })[] = [];
 
     comments.forEach((comment) => {
-      commentMap.set(comment._id, { ...comment, replies: [] });
+      commentMap.set(comment._id, {
+        ...comment,
+        replies: [],
+        userId: { ...comment.userId },
+      });
     });
 
     comments.forEach((comment) => {
@@ -300,6 +315,10 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     return sortedRootComments;
   };
 
+  const nestedComments = useMemo(() => {
+    return buildNestedComments(comments, user?._id);
+  }, [comments, user?._id, upvotedComments]);
+
   const value: DataContextType = {
     posts,
     currentPost,
@@ -307,7 +326,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     postsError,
     upvotedPosts,
 
-    comments: buildNestedComments(comments, user?._id),
+    comments: nestedComments,
     commentsLoading,
     commentsError,
     upvotedComments,

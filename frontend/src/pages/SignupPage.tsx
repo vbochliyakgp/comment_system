@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../components/AuthPage.css";
 
 const SignupPage: React.FC = () => {
@@ -14,6 +13,7 @@ const SignupPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +30,7 @@ const SignupPage: React.FC = () => {
       }
 
       await register(name, email, password);
+      navigate("/");
     } catch (error: any) {
       setError(error.message || "An error occurred");
     } finally {
@@ -39,15 +40,10 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="auth-container">
-      <motion.div
-        className="auth-card"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="auth-card">
         <div className="auth-header">
-          <h1>Create Account</h1>
-          <p>Join the conversation</p>
+          <h1>Sign Up</h1>
+          <p>Create a new account to get started</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -60,7 +56,7 @@ const SignupPage: React.FC = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder="John Doe"
                 className="auth-input"
               />
             </div>
@@ -75,7 +71,7 @@ const SignupPage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="john@example.com"
                 className="auth-input"
               />
             </div>
@@ -90,7 +86,7 @@ const SignupPage: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 className="auth-input"
               />
               <button
@@ -104,41 +100,29 @@ const SignupPage: React.FC = () => {
           </div>
 
           {error && (
-            <motion.div
-              className="error-message"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
-            >
+            <div className="error-message">
               {error}
-            </motion.div>
+            </div>
           )}
 
-          <motion.button
+          <button
             type="submit"
             className="auth-button"
             disabled={isLoading}
-            whileHover={{ scale: isLoading ? 1 : 1.02 }}
-            whileTap={{ scale: isLoading ? 1 : 0.98 }}
-            transition={{ duration: 0.2 }}
           >
-            {isLoading ? "Loading..." : "Create Account"}
-          </motion.button>
+            {isLoading ? "Creating..." : "Sign Up"}
+          </button>
         </form>
 
         <div className="auth-footer">
           <p>
             Already have an account?{" "}
             <Link to="/login" className="auth-toggle">
-              Sign in
+              Login
             </Link>
           </p>
-          <p className="demo-info">
-            Demo: Use any email with allowed domains (gmail.com, yahoo.com,
-            etc.)
-          </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

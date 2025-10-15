@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThumbsUp, Reply, ChevronDown, ChevronRight } from 'lucide-react';
 import type { Comment as CommentType } from '../services/api';
@@ -24,7 +24,9 @@ const Comment: React.FC<CommentProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const isUpvoted = comment.hasUpvoted === true || upvotedComments.has(comment._id);
+  const isUpvoted = useMemo(() => {
+    return comment.hasUpvoted === true || upvotedComments.has(comment._id);
+  }, [comment.hasUpvoted, comment._id, upvotedComments]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

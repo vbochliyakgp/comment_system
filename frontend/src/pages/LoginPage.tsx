@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../components/AuthPage.css";
 
 const LoginPage: React.FC = () => {
@@ -13,6 +12,7 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +29,7 @@ const LoginPage: React.FC = () => {
       }
 
       await login(email, password);
+      navigate("/");
     } catch (error: any) {
       setError(error.message || "An error occurred");
     } finally {
@@ -38,15 +39,10 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="auth-container">
-      <motion.div
-        className="auth-card"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="auth-card">
         <div className="auth-header">
-          <h1>Welcome Back</h1>
-          <p>Sign in to continue to the discussion</p>
+          <h1>Login</h1>
+          <p>Enter your credentials to access your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -59,7 +55,7 @@ const LoginPage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="your@email.com"
                 className="auth-input"
               />
             </div>
@@ -74,7 +70,7 @@ const LoginPage: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 className="auth-input"
               />
               <button
@@ -88,41 +84,29 @@ const LoginPage: React.FC = () => {
           </div>
 
           {error && (
-            <motion.div
-              className="error-message"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
-            >
+            <div className="error-message">
               {error}
-            </motion.div>
+            </div>
           )}
 
-          <motion.button
+          <button
             type="submit"
             className="auth-button"
             disabled={isLoading}
-            whileHover={{ scale: isLoading ? 1 : 1.02 }}
-            whileTap={{ scale: isLoading ? 1 : 0.98 }}
-            transition={{ duration: 0.2 }}
           >
-            {isLoading ? "Loading..." : "Sign In"}
-          </motion.button>
+            {isLoading ? "Signing in..." : "Login"}
+          </button>
         </form>
 
         <div className="auth-footer">
           <p>
             Don't have an account?{" "}
             <Link to="/signup" className="auth-toggle">
-              Sign up
+              Create one
             </Link>
           </p>
-          <p className="demo-info">
-            Demo: Use any email with allowed domains (gmail.com, yahoo.com,
-            etc.)
-          </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
