@@ -21,9 +21,11 @@ export const getPosts = async (req, res) => {
       skip: parseInt(skip),
     });
 
-    const postsWithUpvoteStatus = posts.map(post => {
+    const postsWithUpvoteStatus = posts.map((post) => {
       const postObj = post.toObject ? post.toObject() : post;
-      postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
+      postObj.hasUpvoted = post.upvotedBy.some(
+        (id) => id.toString() === userId.toString()
+      );
       return postObj;
     });
 
@@ -59,15 +61,18 @@ export const upvotePost = async (req, res) => {
       });
     }
 
-    const hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
-    
+    const hasUpvoted = post.upvotedBy.some(
+      (id) => id.toString() === userId.toString()
+    );
+
     if (hasUpvoted) {
-      post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
+      post.upvotedBy = post.upvotedBy.filter(
+        (id) => id.toString() !== userId.toString()
+      );
       post.upvotes = Math.max(0, post.upvotes - 1);
     } else {
       post.upvotedBy.push(userId);
       post.upvotes += 1;
-      
     }
 
     await post.save();
@@ -109,18 +114,22 @@ export const getPostWithComments = async (req, res) => {
     const comments = await Comment.getCommentsForPost(id, {
       sortBy,
       sortOrder,
-      limit: 100,
     });
 
     const postObj = post.toObject ? post.toObject() : post;
-    postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
+    postObj.hasUpvoted = post.upvotedBy.some(
+      (id) => id.toString() === userId.toString()
+    );
 
-    const commentsWithUpvoteStatus = comments.map(comment => {
+    const commentsWithUpvoteStatus = comments.map((comment) => {
       const commentObj = comment.toObject ? comment.toObject() : comment;
-      commentObj.hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());
+      commentObj.hasUpvoted = comment.upvotedBy.some(
+        (id) => id.toString() === userId.toString()
+      );
       return commentObj;
     });
 
+    console.log("returning comments length", commentsWithUpvoteStatus.length);
     res.json({
       success: true,
       data: {
