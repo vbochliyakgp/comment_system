@@ -33,10 +33,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </motion.button>
             <div className="user-info">
-              <span>Welcome, {user?.name}</span>
+              <span title={`Welcome, ${user?.name}`}>
+                Welcome, {user?.name}
+              </span>
               <button 
                 className="logout-button"
                 onClick={logout}
+                title="Logout"
               >
                 Logout
               </button>

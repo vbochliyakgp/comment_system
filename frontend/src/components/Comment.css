@@ -16,8 +16,8 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: calc(0% - 80px);
+  bottom: calc(0% + 80px);
   width: 2px;
   background: var(--comment-line);
   opacity: 0.6;
@@ -27,7 +27,7 @@
   content: "";
   position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: calc(0% + 80px);
   width: 8px;
   height: 2px;
   background: var(--comment-line);
@@ -51,7 +51,7 @@
 
 .comment-content:hover {
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: 0 0 0 20px;
   padding: 8px 12px;
   margin: 0 -12px;
 }
@@ -172,17 +172,6 @@
   position: relative;
 }
 
-.comment.nested .comment-content::before {
-  content: "";
-  position: absolute;
-  left: -20px;
-  top: 0;
-  bottom: 0;
-  width: 20px;
-  background: transparent;
-  transition: background-color 0.2s ease;
-}
-
 .comment.nested:hover .comment-content::before {
   background: var(--bg-tertiary);
   opacity: 0.3;
@@ -198,11 +187,6 @@
     padding-left: 16px;
     margin-left: 0 !important;
     margin-top: 3px;
-  }
-
-  .comment.nested .comment-content::before {
-    left: -16px;
-    width: 16px;
   }
 
   .comment-content {
@@ -244,11 +228,6 @@
   .comment.nested {
     padding-left: 12px;
     margin-top: 2px;
-  }
-
-  .comment.nested .comment-content::before {
-    left: -12px;
-    width: 12px;
   }
 
   .comment-content {
