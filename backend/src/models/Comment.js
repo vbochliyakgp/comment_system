@@ -110,7 +110,7 @@ commentSchema.statics.getCommentsForPost = function (postId, options = {}) {
   const {
     sortBy = "upvotes",
     sortOrder = "desc",
-    limit = 50,
+    limit = 1000,
     skip = 0,
     maxDepth = 10,
   } = options;

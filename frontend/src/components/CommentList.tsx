@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, SortAsc, SortDesc, MoreHorizontal } from "lucide-react";
 import Comment from "./Comment";

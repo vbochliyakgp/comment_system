@@ -107,7 +107,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         const response = await postsAPI.getPostWithComments(id, {
           sortBy,
           sortOrder,
-          limit: 50,
+          limit: 1000,
         });
 
         if (response.success && response.data) {
