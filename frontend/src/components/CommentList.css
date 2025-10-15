@@ -141,15 +141,15 @@
   color: var(--accent-color);
 }
 
+
 .see-more-button::before {
   content: "";
   position: absolute;
   left: -20px;
-  top: 0;
-  bottom: 0;
+  top: calc(0% - 9px);
+  bottom: calc(0% + 9px);
   width: 2px;
   background: var(--comment-line);
-  border-radius: 1px;
   opacity: 0.6;
 }
 
@@ -157,11 +157,10 @@
   content: "";
   position: absolute;
   left: -20px;
-  bottom: 0;
-  width: 8px;
+  bottom: calc(0% + 9px);
+  width: 20px;
   height: 2px;
   background: var(--comment-line);
-  border-radius: 1px;
   opacity: 0.6;
 }
 
