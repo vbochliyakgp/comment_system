@@ -12,7 +12,7 @@ services:
       - app-network
 
   backend:
-    build: ./backend
+    build: ../backend
     container_name: backend
     restart: unless-stopped
     environment:
@@ -29,7 +29,7 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    build: ../frontend
     container_name: frontend
     restart: unless-stopped
     environment:
