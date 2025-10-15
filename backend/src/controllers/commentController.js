@@ -76,75 +76,6 @@ export const createComment = async (req, res) => {
   }
 };
 
-/**
- * Update a comment
- */
-export const updateComment = async (req, res) => {
-  try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: errors.array(),
-      });
-    }
-
-    const { id } = req.params;
-    const { text } = req.body;
-    const userId = req.user._id;
-    const userRole = req.user.role;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Find comment
-    const comment = await Comment.findById(id);
-    if (!comment) {
-      return res.status(404).json({
-        success: false,
-        message: "Comment not found",
-      });
-    }
-
-    // Check if user can edit (owner or admin)
-    if (
-      comment.userId.toString() !== userId.toString() &&
-      userRole !== "admin"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to edit this comment",
-      });
-    }
-
-    // Update comment
-    comment.text = text;
-    comment.isEdited = true;
-    comment.editedAt = new Date();
-
-    await comment.save();
-
-    res.json({
-      success: true,
-      message: "Comment updated successfully",
-      data: {
-        comment,
-      },
-    });
-  } catch (error) {
-    console.error("Update comment error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error while updating comment",
-    });
-  }
-};
 
 /**
  * Upvote a comment
@@ -181,11 +112,6 @@ export const upvoteComment = async (req, res) => {
       comment.upvotedBy.push(userId);
       comment.upvotes += 1;
       
-      // Remove from downvotes if user had downvoted
-      if (comment.downvotedBy.some(id => id.toString() === userId.toString())) {
-        comment.downvotedBy = comment.downvotedBy.filter(id => id.toString() !== userId.toString());
-        comment.downvotes = Math.max(0, comment.downvotes - 1);
-      }
     }
 
     await comment.save();
@@ -195,7 +121,6 @@ export const upvoteComment = async (req, res) => {
       message: hasUpvoted ? "Upvote removed" : "Comment upvoted successfully",
       data: {
         upvotes: comment.upvotes,
-        downvotes: comment.downvotes,
         hasUpvoted: !hasUpvoted,
       },
     });

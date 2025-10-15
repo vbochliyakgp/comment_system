@@ -28,11 +28,6 @@ const commentSchema = new mongoose.Schema(
       default: 0,
       min: [0, "Upvotes cannot be negative"],
     },
-    downvotes: {
-      type: Number,
-      default: 0,
-      min: [0, "Downvotes cannot be negative"],
-    },
     replyCount: {
       type: Number,
       default: 0,
@@ -42,26 +37,8 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: [0, "Depth cannot be negative"],
-      max: [10, "Maximum nesting depth is 10 levels"],
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    isEdited: {
-      type: Boolean,
-      default: false,
-    },
-    editedAt: {
-      type: Date,
     },
     upvotedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    downvotedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -76,11 +53,10 @@ const commentSchema = new mongoose.Schema(
 commentSchema.index({ postId: 1, createdAt: -1 });
 commentSchema.index({ parentId: 1, createdAt: 1 });
 commentSchema.index({ userId: 1 });
-commentSchema.index({ isActive: 1 });
 commentSchema.index({ depth: 1 });
 
 commentSchema.virtual("netScore").get(function () {
-  return this.upvotes - this.downvotes;
+  return this.upvotes;
 });
 
 // Virtual for path (useful for nested comments)
@@ -98,11 +74,6 @@ commentSchema.pre("save", async function (next) {
       const parentComment = await this.constructor.findById(this.parentId);
       if (parentComment) {
         this.depth = parentComment.depth + 1;
-
-        // Prevent too deep nesting
-        if (this.depth > 10) {
-          return next(new Error("Maximum nesting depth exceeded"));
-        }
       }
     } catch (error) {
       return next(error);
@@ -131,18 +102,11 @@ commentSchema.methods.incrementUpvotes = function () {
   return this.save();
 };
 
-// Instance method to increment downvotes
-commentSchema.methods.incrementDownvotes = function () {
-  this.downvotes += 1;
-  return this.save();
-};
-
 // Instance method to get nested replies
 commentSchema.methods.getReplies = function () {
   return this.constructor
     .find({
       parentId: this._id,
-      isActive: true,
     })
     .populate("userId", "name avatar")
     .sort({ createdAt: 1 });
@@ -163,7 +127,6 @@ commentSchema.statics.getCommentsForPost = function (postId, options = {}) {
 
   return this.find({
     postId,
-    isActive: true,
     depth: { $lte: maxDepth },
   })
     .populate("userId", "name avatar")

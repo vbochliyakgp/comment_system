@@ -27,8 +27,6 @@
   --accent-hover: #5a67d8;
   --upvote-color: #059669;
   --upvote-bg: #ecfdf5;
-  --downvote-color: #dc2626;
-  --downvote-bg: #fef2f2;
   --comment-line: #d1d5db;
   --shadow: rgba(0, 0, 0, 0.1);
   --shadow-hover: rgba(0, 0, 0, 0.15);
@@ -62,8 +60,6 @@
   --accent-hover: #6366f1;
   --upvote-color: #10b981;
   --upvote-bg: #064e3b;
-  --downvote-color: #ef4444;
-  --downvote-bg: #7f1d1d;
   --comment-line: #4b5563;
   --shadow: rgba(0, 0, 0, 0.3);
   --shadow-hover: rgba(0, 0, 0, 0.4);

@@ -20,10 +20,8 @@ interface DataContextType {
   
   // Actions
   fetchPosts: () => Promise<void>;
-  fetchPost: (id: string) => Promise<void>;
   fetchPostWithComments: (id: string, sortBy?: string, sortOrder?: string) => Promise<void>;
   createComment: (text: string, postId: string, parentId?: string) => Promise<void>;
-  editComment: (commentId: string, text: string) => Promise<void>;
   upvoteComment: (commentId: string) => Promise<void>;
   upvotePost: (postId: string) => Promise<void>;
   refreshComments: () => Promise<void>;
@@ -85,25 +83,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Fetch single post
-  const fetchPost = useCallback(async (id: string) => {
-    try {
-      setPostsLoading(true);
-      setPostsError(null);
-      const response = await postsAPI.getPost(id);
-      
-      if (response.success && response.data) {
-        setCurrentPost(response.data.post);
-      } else {
-        throw new Error(response.message || 'Failed to fetch post');
-      }
-    } catch (error: any) {
-      console.error('Fetch post error:', error);
-      setPostsError(error.message || 'Failed to fetch post');
-    } finally {
-      setPostsLoading(false);
-    }
-  }, []);
 
   // Fetch post with comments
   const fetchPostWithComments = useCallback(async (id: string, sortBy = 'upvotes', sortOrder = 'desc') => {
@@ -162,9 +141,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
               ? { 
                   ...comment, 
                   upvotes: response.data?.upvotes || comment.upvotes,
-                  downvotes: response.data?.downvotes || comment.downvotes,
                   hasUpvoted: response.data?.hasUpvoted || false,
-                  hasDownvoted: false // Reset downvote when upvoting
                 }
               : comment
           )
@@ -201,9 +178,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           setCurrentPost(prev => prev ? { 
             ...prev, 
             upvotes: response.data?.upvotes || prev.upvotes,
-            downvotes: response.data?.downvotes || prev.downvotes,
             hasUpvoted: response.data?.hasUpvoted || false,
-            hasDownvoted: false // Reset downvote when upvoting
           } : null);
         }
         
@@ -213,9 +188,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
               ? { 
                   ...post, 
                   upvotes: response.data?.upvotes || post.upvotes,
-                  downvotes: response.data?.downvotes || post.downvotes,
                   hasUpvoted: response.data?.hasUpvoted || false,
-                  hasDownvoted: false // Reset downvote when upvoting
                 }
               : post
           )
@@ -240,28 +213,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   }, [currentPost]);
 
-  // Edit comment
-  const editComment = useCallback(async (commentId: string, text: string) => {
-    try {
-      const response = await commentsAPI.updateComment(commentId, { text });
-      
-      if (response.success) {
-        // Update the comment in the local state
-        setComments(prevComments => 
-          prevComments.map(comment => 
-            comment._id === commentId 
-              ? { ...comment, text: text, updatedAt: new Date().toISOString() }
-              : comment
-          )
-        );
-      } else {
-        throw new Error(response.message || 'Failed to update comment');
-      }
-    } catch (error: any) {
-      console.error('Edit comment error:', error);
-      throw new Error(error.message || 'Failed to update comment');
-    }
-  }, []);
 
   // Refresh comments
   const refreshComments = useCallback(async () => {
@@ -348,10 +299,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     
     // Actions
     fetchPosts,
-    fetchPost,
     fetchPostWithComments,
     createComment,
-    editComment,
     upvoteComment,
     upvotePost,
     refreshComments,

@@ -66,10 +66,8 @@ export interface Post {
   content: string;
   author: string;
   upvotes: number;
-  downvotes: number;
   commentCount: number;
   hasUpvoted?: boolean;
-  hasDownvoted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -85,13 +83,9 @@ export interface Comment {
   };
   parentId?: string;
   upvotes: number;
-  downvotes: number;
   replyCount: number;
   depth: number;
-  isEdited: boolean;
-  editedAt?: string;
   hasUpvoted?: boolean;
-  hasDownvoted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -127,66 +121,33 @@ export const postsAPI = {
     return response.data;
   },
 
-  getPost: async (id: string) => {
-    const response = await api.get<ApiResponse<{ post: Post }>>(`/posts/${id}`);
-    return response.data;
-  },
 
   getPostWithComments: async (id: string, params?: { sortBy?: string; sortOrder?: string; limit?: number; skip?: number }) => {
     const response = await api.get<ApiResponse<{ post: Post; comments: Comment[]; commentCount: number }>>(`/posts/${id}/comments`, { params });
     return response.data;
   },
 
-  createPost: async (postData: { title: string; content: string; author: string }) => {
-    const response = await api.post<ApiResponse<{ post: Post }>>('/posts', postData);
-    return response.data;
-  },
 
-  updatePost: async (id: string, postData: { title?: string; content?: string }) => {
-    const response = await api.put<ApiResponse<{ post: Post }>>(`/posts/${id}`, postData);
-    return response.data;
-  },
 
-  deletePost: async (id: string) => {
-    const response = await api.delete<ApiResponse>(`/posts/${id}`);
-    return response.data;
-  },
 
   upvotePost: async (id: string) => {
-    const response = await api.post<ApiResponse<{ upvotes: number; downvotes: number; hasUpvoted: boolean }>>(`/posts/${id}/upvote`);
+    const response = await api.post<ApiResponse<{ upvotes: number; hasUpvoted: boolean }>>(`/posts/${id}/upvote`);
     return response.data;
   },
 };
 
 // Comments API
 export const commentsAPI = {
-  getComments: async (postId: string, params?: { sortBy?: string; sortOrder?: string; limit?: number; skip?: number }) => {
-    const response = await api.get<ApiResponse<{ comments: Comment[]; count: number }>>(`/comments/post/${postId}`, { params });
-    return response.data;
-  },
 
   createComment: async (commentData: { text: string; postId: string; parentId?: string }) => {
     const response = await api.post<ApiResponse<{ comment: Comment }>>('/comments', commentData);
     return response.data;
   },
 
-  updateComment: async (id: string, commentData: { text: string }) => {
-    const response = await api.put<ApiResponse<{ comment: Comment }>>(`/comments/${id}`, commentData);
-    return response.data;
-  },
 
-  deleteComment: async (id: string) => {
-    const response = await api.delete<ApiResponse>(`/comments/${id}`);
-    return response.data;
-  },
 
   upvoteComment: async (id: string) => {
-    const response = await api.post<ApiResponse<{ upvotes: number; downvotes: number; hasUpvoted: boolean }>>(`/comments/${id}/upvote`);
-    return response.data;
-  },
-
-  downvoteComment: async (id: string) => {
-    const response = await api.post<ApiResponse<{ downvotes: number }>>(`/comments/${id}/downvote`);
+    const response = await api.post<ApiResponse<{ upvotes: number; hasUpvoted: boolean }>>(`/comments/${id}/upvote`);
     return response.data;
   },
 };

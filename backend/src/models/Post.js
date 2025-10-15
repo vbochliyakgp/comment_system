@@ -25,34 +25,12 @@ const postSchema = new mongoose.Schema(
       default: 0,
       min: [0, "Upvotes cannot be negative"],
     },
-    downvotes: {
-      type: Number,
-      default: 0,
-      min: [0, "Downvotes cannot be negative"],
-    },
     commentCount: {
       type: Number,
       default: 0,
       min: [0, "Comment count cannot be negative"],
     },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    tags: [
-      {
-        type: String,
-        trim: true,
-        maxlength: [30, "Tag cannot be more than 30 characters"],
-      },
-    ],
     upvotedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    downvotedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -67,11 +45,10 @@ const postSchema = new mongoose.Schema(
 // Index for better query performance
 postSchema.index({ createdAt: -1 });
 postSchema.index({ upvotes: -1 });
-postSchema.index({ isActive: 1 });
 
-// Virtual for net score (upvotes - downvotes)
+// Virtual for net score (upvotes)
 postSchema.virtual("netScore").get(function () {
-  return this.upvotes - this.downvotes;
+  return this.upvotes;
 });
 
 // Ensure virtual fields are serialized
@@ -83,17 +60,12 @@ postSchema.methods.incrementUpvotes = function () {
   return this.save();
 };
 
-// Instance method to increment downvotes
-postSchema.methods.incrementDownvotes = function () {
-  this.downvotes += 1;
-  return this.save();
-};
 
 // Instance method to update comment count
 postSchema.methods.updateCommentCount = function () {
   return mongoose
     .model("Comment")
-    .countDocuments({ postId: this._id, isActive: true })
+    .countDocuments({ postId: this._id })
     .then((count) => {
       this.commentCount = count;
       return this.save();
@@ -107,7 +79,6 @@ postSchema.statics.getPosts = async function (options = {}) {
     sortOrder = "desc",
     limit = 20,
     skip = 0,
-    isActive = true,
   } = options;
 
   // Build sort object
@@ -115,7 +86,7 @@ postSchema.statics.getPosts = async function (options = {}) {
   sortObj[sortBy] = sortOrder === "desc" ? -1 : 1;
 
   // Build query
-  const query = { isActive };
+  const query = {};
 
   try {
     const posts = await this.find(query)

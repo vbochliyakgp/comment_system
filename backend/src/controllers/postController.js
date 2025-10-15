@@ -25,10 +25,8 @@ export const getPosts = async (req, res) => {
       const postObj = post.toObject ? post.toObject() : post;
       if (userId) {
         postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
-        postObj.hasDownvoted = post.downvotedBy.some(id => id.toString() === userId.toString());
       } else {
         postObj.hasUpvoted = false;
-        postObj.hasDownvoted = false;
       }
       return postObj;
     });
@@ -84,11 +82,6 @@ export const upvotePost = async (req, res) => {
       post.upvotedBy.push(userId);
       post.upvotes += 1;
       
-      // Remove from downvotes if user had downvoted
-      if (post.downvotedBy.some(id => id.toString() === userId.toString())) {
-        post.downvotedBy = post.downvotedBy.filter(id => id.toString() !== userId.toString());
-        post.downvotes = Math.max(0, post.downvotes - 1);
-      }
     }
 
     await post.save();
@@ -98,7 +91,6 @@ export const upvotePost = async (req, res) => {
       message: hasUpvoted ? "Upvote removed" : "Post upvoted successfully",
       data: {
         upvotes: post.upvotes,
-        downvotes: post.downvotes,
         hasUpvoted: !hasUpvoted,
       },
     });
@@ -140,10 +132,8 @@ export const getPostWithComments = async (req, res) => {
     const postObj = post.toObject ? post.toObject() : post;
     if (userId) {
       postObj.hasUpvoted = post.upvotedBy.some(id => id.toString() === userId.toString());
-      postObj.hasDownvoted = post.downvotedBy.some(id => id.toString() === userId.toString());
     } else {
       postObj.hasUpvoted = false;
-      postObj.hasDownvoted = false;
     }
 
     // Add upvote status for comments
@@ -151,10 +141,8 @@ export const getPostWithComments = async (req, res) => {
       const commentObj = comment.toObject ? comment.toObject() : comment;
       if (userId) {
         commentObj.hasUpvoted = comment.upvotedBy.some(id => id.toString() === userId.toString());
-        commentObj.hasDownvoted = comment.downvotedBy.some(id => id.toString() === userId.toString());
       } else {
         commentObj.hasUpvoted = false;
-        commentObj.hasDownvoted = false;
       }
       return commentObj;
     });

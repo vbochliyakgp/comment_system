@@ -1,4 +1,4 @@
-# InterIIT Tech Meet 14.0 - Comment System API
+# InterIIT Discussion Platform API
 
 ## Base URL
 ```
@@ -6,7 +6,7 @@ http://localhost:3000/api
 ```
 
 ## Authentication
-All protected routes require a Bearer token in the Authorization header:
+Protected routes require a Bearer token in the Authorization header:
 ```
 Authorization: Bearer <your_jwt_token>
 ```
@@ -44,18 +44,6 @@ GET /api/auth/profile
 Authorization: Bearer <token>
 ```
 
-#### Update User Profile
-```http
-PUT /api/auth/profile
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "John Smith",
-  "avatar": "https://example.com/avatar.jpg"
-}
-```
-
 #### Logout User
 ```http
 POST /api/auth/logout
@@ -69,65 +57,20 @@ Authorization: Bearer <token>
 GET /api/posts?limit=10&skip=0&sortBy=createdAt&sortOrder=desc
 ```
 
-#### Get Single Post
-```http
-GET /api/posts/:id
-```
-
 #### Get Post with Comments
 ```http
 GET /api/posts/:id/comments?sortBy=upvotes&sortOrder=desc&limit=50&skip=0
 ```
 
-#### Create Post (Protected)
-```http
-POST /api/posts
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "title": "My Post Title",
-  "content": "Post content here...",
-  "author": "Author Name"
-}
-```
-
-#### Update Post (Protected)
-```http
-PUT /api/posts/:id
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "title": "Updated Title",
-  "content": "Updated content..."
-}
-```
-
-#### Delete Post (Protected)
-```http
-DELETE /api/posts/:id
-Authorization: Bearer <token>
-```
-
 #### Upvote Post
 ```http
 POST /api/posts/:id/upvote
+Authorization: Bearer <token>
 ```
 
 ### Comment Routes (`/api/comments`)
 
-#### Get All Comments for Post
-```http
-GET /api/comments/post/:postId?sortBy=upvotes&sortOrder=desc&limit=50&skip=0
-```
-
-#### Get Top-Level Comments for Post
-```http
-GET /api/comments/post/:postId/top-level?sortBy=upvotes&sortOrder=desc&limit=20&skip=0
-```
-
-#### Create Comment (Protected)
+#### Create Comment
 ```http
 POST /api/comments
 Authorization: Bearer <token>
@@ -140,36 +83,13 @@ Content-Type: application/json
 }
 ```
 
-#### Update Comment (Protected)
-```http
-PUT /api/comments/:id
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "text": "Updated comment text"
-}
-```
-
-#### Delete Comment (Protected)
-```http
-DELETE /api/comments/:id
-Authorization: Bearer <token>
-```
-
 #### Upvote Comment
 ```http
 POST /api/comments/:id/upvote
-```
-
-#### Downvote Comment
-```http
-POST /api/comments/:id/downvote
+Authorization: Bearer <token>
 ```
 
 ## Response Format
-
-All API responses follow this format:
 
 ### Success Response
 ```json
@@ -211,10 +131,6 @@ JWT_EXPIRE=7d
 
 # CORS Configuration
 FRONTEND_URL=http://localhost:5173
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
 ```
 
 ## Setup Instructions
@@ -228,7 +144,7 @@ npm install
 
 3. Seed the database with sample data:
 ```bash
-npm run seed
+node src/scripts/seed.js
 ```
 
 4. Start the development server:
@@ -237,11 +153,3 @@ npm run dev
 ```
 
 The server will be available at `http://localhost:3000`
-
-## Health Check
-
-```http
-GET /api/health
-```
-
-Returns server status and timestamp.
