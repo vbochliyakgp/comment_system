@@ -79,7 +79,7 @@ const Comment: React.FC<CommentProps> = ({
     depth >= maxDepth && comment.replies && comment.replies.length > 0;
 
   const getDisplayLimit = (depth: number) => {
-    if (depth === 0) return 10;
+    if (depth === 0) return 2;
     if (depth === 1) return 1;
     return 0;
   };
