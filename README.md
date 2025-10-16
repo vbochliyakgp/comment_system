@@ -2,7 +2,7 @@
 
 Full-stack discussion platform with nested comments and upvoting system.
 
-Deployed at: https://interiit14.work.gd
+Deployed at: https://comment-system-frontend.vercel.app
 
 ## Project Overview
 

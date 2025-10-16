@@ -52,7 +52,7 @@ const CommentList: React.FC<CommentListProps> = ({
     { value: "oldest", label: "Oldest First", icon: SortAsc },
   ];
 
-  const getSortLabel = (option: SortOption) => {
+  const getSortLabel = (option: SortOption | null) => {
     return sortOptions.find((opt) => opt.value === option)?.label || "Sort";
   };
 
