@@ -1,28 +1,88 @@
-
 # Discussion Platform
 
 Full-stack discussion platform with nested comments and upvoting system.
 
-## 📋 Project Overview
+Deployed at: https://interiit14.work.gd
 
-This is a modern discussion platform:
+## Project Overview
 
-• **Real-time discussions** - Create posts and engage in threaded conversations
-• **Nested commenting** - Unlimited comment depth with proper threading
-• **Voting system** - Upvote posts and comments to highlight quality content
-• **User authentication** - Secure JWT-based login/registration system
-• **Responsive design** - Works seamlessly on desktop and mobile devices
-• **Theme support** - Light and dark mode for better user experience
-• **Production ready** - Docker containerized with SSL certificates
+A full-stack discussion platform with nested comments and upvoting system. Users can create posts, comment on them, and engage through upvoting.
+
+### Frontend Features
+
+The frontend consists of 4 main pages:
+
+1. **Login Page** - User authentication with email and password
+2. **Signup Page** - User registration with email and password
+3. **Posts List Page** - Displays all posts in card format with upvote status
+4. **Post Details Page** - Shows detailed post with nested comments
+
+**Key Frontend Features:**
+- Authentication using JWT tokens with bcryptjs password hashing
+- Posts displayed in card format showing upvote status for each user
+- Detailed post view with nested comment system
+- Users can upvote posts and comments, and reply to comments
+- Comment prioritization: user's own comments first, then by upvote count
+- Pagination: 10 comments in first layer, 2 in second layer, with "see more" button for additional content
+- Light/dark theme support
+- Responsive design
+
+### Backend Features
+
+The backend provides a RESTful API with the following routes and features:
+
+#### Authentication Routes (`/api/auth`)
+- **POST `/register`** - User registration with name, email, and password
+  - Validates email format and password strength
+  - Hashes password using bcryptjs with salt
+  - Returns JWT token and user profile
+- **POST `/login`** - User authentication
+  - Validates email and password
+  - Returns JWT token and user profile
+  - Handles account deactivation status
+- **GET `/profile`** - Get current user profile (requires authentication)
+
+#### Posts Routes (`/api/posts`)
+- **GET `/`** - Get all posts with pagination and sorting
+  - Query parameters: `sortBy`, `sortOrder`, `limit`, `skip`
+  - Returns posts with upvote status for current user
+- **GET `/:id/comments`** - Get specific post with nested comments
+  - Query parameters: `sortBy`, `sortOrder` for comment sorting
+  - Returns post details with comments (user's comments first, then by upvotes -- this part is handled at frontend)
+- **POST `/:id/upvote`** - Toggle upvote on a post
+  - Adds/removes user from upvotedBy array
+  - Updates upvote count
+
+#### Comments Routes (`/api/comments`)
+- **POST `/`** - Create new comment or reply
+  - Body: `text`, `postId`, `parentId`
+  - Validates comment text and post existence
+  - Supports nested replies through parentId
+- **POST `/:id/upvote`** - Toggle upvote on a comment/reply
+  - Adds/removes user from upvotedBy array
+  - Updates upvote count
+
+#### Key Backend Features
+- **JWT Authentication** - Secure token-based authentication
+- **Password Security** - bcryptjs hashing with salt rounds
+- **Input Validation** - Express-validator for request validation
+- **Error Handling** - Centralized error handling middleware
+- **Rate Limiting** - Request rate limiting for API protection
+- **CORS Configuration** - Cross-origin resource sharing setup
+- **Security Headers** - Helmet.js for security headers
+- **Database Integration** - MongoDB with Mongoose ODM
+- **Nested Comments** - Support for unlimited comment nesting
+- **Upvote System** - Toggle-based upvoting for posts and comments
 
 ### Architecture
+
 • **Frontend**: React with TypeScript, Vite for fast development
 • **Backend**: Node.js/Express API with MongoDB database
 • **Authentication**: JWT tokens with bcrypt password hashing
 • **Deployment**: Docker containers with Nginx reverse proxy
 • **Security**: Rate limiting, CORS, Helmet security headers
 
-## 🚀 Quick Deploy
+## Quick Deploy
 
 ```bash
 ./setup/deploy.sh
@@ -38,7 +98,7 @@ cp .env.example .env
 npm run dev
 
 # Frontend
-cd frontend  
+cd frontend
 npm install
 npm run dev
 
@@ -47,7 +107,7 @@ cd backend
 npm run seed
 ```
 
-## ✨ Features
+## Features
 
 - JWT authentication
 - Nested comments
@@ -55,33 +115,63 @@ npm run seed
 - Light/dark theme
 - Responsive design
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 **Backend**: Node.js, Express, MongoDB, JWT  
 **Frontend**: React, TypeScript, Vite, Framer Motion  
 **Deploy**: Docker, Nginx, Let's Encrypt SSL
 
-## 📡 API Endpoints
+## API Endpoints
 
-### Authentication
-• `POST /api/auth/register` - User registration
-• `POST /api/auth/login` - User login
-• `GET /api/auth/profile` - Get user profile
+### Authentication Endpoints
 
-### Posts
-• `GET /api/posts` - Get all posts
-• `POST /api/posts` - Create new post
-• `GET /api/posts/:id/comments` - Get post with comments
-• `POST /api/posts/:id/upvote` - Upvote/downvote post
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/auth/register` | Register new user | No |
+| POST | `/api/auth/login` | User login | No |
+| GET | `/api/auth/profile` | Get current user profile | Yes |
 
-### Comments
-• `POST /api/comments` - Create comment
-• `POST /api/comments/:id/upvote` - Upvote/downvote comment
-• `GET /api/comments/:id/replies` - Get comment replies
+### Posts Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/posts` | Get all posts with pagination | Yes |
+| GET | `/api/posts/:id/comments` | Get post with nested comments | Yes |
+| POST | `/api/posts/:id/upvote` | Toggle upvote on post | Yes |
+
+### Comments Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/comments` | Create comment or reply | Yes |
+| POST | `/api/comments/:id/upvote` | Toggle upvote on comment | Yes |
+
+### Request/Response Examples
+
+#### Register User
+```json
+POST /api/auth/register
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securePassword123"
+}
+```
+
+#### Create Comment
+```json
+POST /api/comments
+{
+  "text": "This is a great post!",
+  "postId": "64a1b2c3d4e5f6789abcdef0",
+  "parentId": "64a1b2c3d4e5f6789abcdef1" // Optional for replies
+}
+```
 
 ## 🔧 Configuration
 
 ### Environment Variables
+
 • `MONGODB_URI` - MongoDB connection string
 • `JWT_SECRET` - Secret key for JWT tokens
 • `FRONTEND_URL` - Frontend URL for CORS
@@ -89,11 +179,12 @@ npm run seed
 • `RATE_LIMIT_MAX_REQUESTS` - Max requests per window
 
 ### Database Schema
+
 • **Users**: username, email, password (hashed)
 • **Posts**: title, content, author, upvotes, createdAt
 • **Comments**: content, author, post, parentComment, upvotes
 
-## 🚀 Production Deployment
+## Production Deployment
 
 The project includes complete Docker setup with:
 • **3 services**: MongoDB, Backend API, Frontend
